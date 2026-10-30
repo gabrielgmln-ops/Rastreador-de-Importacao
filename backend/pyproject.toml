@@ -1,0 +1,11 @@
+# rastreador-importacao/backend/pyproject.toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q --cov=app --cov-report=term-missing --cov-fail-under=90"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+omit = ["ferramentas/*"]
