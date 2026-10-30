@@ -1,0 +1,135 @@
+/* rastreador-importacao/frontend/src/estilo.css
+   Visual de ferramenta de operação: denso, legível, com o atraso como única cor forte. */
+:root {
+  --fundo: #f6f7f9;
+  --superficie: #ffffff;
+  --texto: #1b1f24;
+  --sutil: #5f6b7a;
+  --borda: #dde2e8;
+  --acento: #1f5fbf;
+  --acento-texto: #ffffff;
+  --atraso: #c2362b;
+  --atraso-fundo: #fdecea;
+  --ok: #1e7a46;
+  --ok-fundo: #e6f4ec;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #12151a;
+    --superficie: #1b2027;
+    --texto: #e6e9ee;
+    --sutil: #96a1b0;
+    --borda: #2c333d;
+    --acento: #5b93e6;
+    --acento-texto: #0d1117;
+    --atraso: #f07368;
+    --atraso-fundo: #3a1d1b;
+    --ok: #5fc48a;
+    --ok-fundo: #16301f;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+h1, h2, h3 { line-height: 1.2; margin: 0 0 12px; }
+h2 { font-size: 22px; display: flex; gap: 10px; align-items: center; }
+h3 { font-size: 16px; margin-top: 24px; }
+.sutil { color: var(--sutil); margin: 0; font-size: 13px; }
+.erro { color: var(--atraso); background: var(--atraso-fundo); padding: 8px 12px; border-radius: 6px; }
+
+button, input, select {
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--borda);
+  background: var(--superficie);
+  border-radius: 6px;
+  padding: 7px 12px;
+}
+button { cursor: pointer; }
+button:disabled { opacity: .6; cursor: default; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+.primario { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); }
+.discreto { border-color: transparent; background: transparent; color: var(--sutil); }
+.perigo { color: var(--atraso); }
+
+.topo {
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+  padding: 12px 24px; background: var(--superficie); border-bottom: 1px solid var(--borda);
+}
+.topo nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.topo nav .ativo { border-color: var(--acento); color: var(--acento); }
+.conteudo { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+.cartao { background: var(--superficie); border: 1px solid var(--borda); border-radius: 10px; padding: 16px 18px; }
+
+.login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.login form { width: 100%; max-width: 360px; display: grid; gap: 14px; }
+
+label { display: grid; gap: 4px; font-size: 13px; color: var(--sutil); }
+label input, label select { color: var(--texto); font-size: 15px; }
+
+.indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
+.indicador {
+  display: grid; gap: 4px; text-align: left; padding: 16px 18px;
+  background: var(--superficie); border: 1px solid var(--borda); border-radius: 10px; color: var(--sutil);
+}
+.indicador .numero { font-size: 34px; font-weight: 650; color: var(--texto); font-variant-numeric: tabular-nums; }
+.indicador small { font-size: 15px; font-weight: 400; color: var(--sutil); }
+.indicador.alerta { border-color: var(--atraso); }
+.indicador.alerta .numero { color: var(--atraso); }
+
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.filtros input { flex: 1 1 220px; }
+
+.tabela-rolagem { overflow-x: auto; background: var(--superficie); border: 1px solid var(--borda); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--borda); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--sutil); font-weight: 600; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--fundo); }
+tbody tr:last-child td { border-bottom: 0; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.selo { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--fundo); color: var(--sutil); white-space: nowrap; }
+.selo.atraso { background: var(--atraso-fundo); color: var(--atraso); }
+.selo.ok { background: var(--ok-fundo); color: var(--ok); }
+
+.cabecalho-detalhe { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin: 8px 0 16px; }
+.grade-detalhe { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dt { color: var(--sutil); }
+dd { margin: 0; font-variant-numeric: tabular-nums; }
+.numero-grande { font-size: 28px; font-weight: 650; margin: 0 0 4px; font-variant-numeric: tabular-nums; }
+.cartao button { margin-top: 12px; }
+
+.linha-do-tempo { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.linha-do-tempo li {
+  background: var(--superficie); border: 1px solid var(--borda); border-left: 4px solid var(--borda);
+  border-radius: 8px; padding: 12px 16px; display: grid; gap: 6px;
+}
+.linha-do-tempo li.feita { border-left-color: var(--ok); }
+.linha-do-tempo li.atual { border-left-color: var(--acento); }
+.linha-do-tempo li.atrasada { border-left-color: var(--atraso); }
+.etapa-nome { font-weight: 600; }
+.etapa-datas { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; color: var(--sutil); font-size: 14px; }
+.etapa-datas input { padding: 3px 6px; font-size: 14px; }
+.avancar { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.formulario { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.formulario .largo { grid-column: 1 / -1; }
+fieldset { border: 1px solid var(--borda); border-radius: 8px; padding: 12px; margin: 0; }
+legend { color: var(--sutil); font-size: 13px; padding: 0 4px; }
+.datas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.acoes { display: flex; justify-content: flex-end; gap: 8px; }
+
+@media (max-width: 600px) {
+  .topo { padding: 12px 16px; }
+  .indicador .numero { font-size: 28px; }
+}
