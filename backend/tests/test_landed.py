@@ -58,3 +58,23 @@ def test_landed_resposta_invalida_502(autenticado, landed):
 
 def test_custo_processo_inexistente_404(autenticado):
     assert autenticado.post("/processos/999/custo").status_code == 404
+
+
+def test_landed_recusa_ncm_repassa_motivo_422(autenticado, landed):
+    landed.resposta = httpx.Response(422, json={"detail": "NCM 99999999 fora da tabela sintética"})
+    p = autenticado.post("/processos", json=novo_processo(ncm="99999999")).json()
+    r = autenticado.post(f"/processos/{p['id']}/custo")
+    assert r.status_code == 422
+    assert "NCM 99999999" in r.json()["detail"]
+
+
+def test_landed_recusa_com_lista_de_erros(autenticado, landed):
+    landed.resposta = httpx.Response(422, json={"detail": [{"msg": "campo inválido"}]})
+    p = autenticado.post("/processos", json=novo_processo()).json()
+    assert "campo inválido" in autenticado.post(f"/processos/{p['id']}/custo").json()["detail"]
+
+
+def test_landed_recusa_sem_json(autenticado, landed):
+    landed.resposta = httpx.Response(422, text="erro")
+    p = autenticado.post("/processos", json=novo_processo()).json()
+    assert "dados inválidos" in autenticado.post(f"/processos/{p['id']}/custo").json()["detail"]

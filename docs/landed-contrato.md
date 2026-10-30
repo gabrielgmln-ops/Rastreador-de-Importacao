@@ -32,17 +32,17 @@ Campos extras são ignorados. `custo_total` pode vir como string ou número; o R
 | Situação | Comportamento do Rastreador |
 |---|---|
 | Timeout / conexão recusada | `502`, custo anterior mantido |
-| HTTP 4xx/5xx da Landed | `502` |
+| HTTP 5xx (ou 4xx que não seja 422) da Landed | `502` |
 | Sem `custo_total`, valor não numérico ou negativo | `502` |
 
 Timeout configurável em `LANDED_TIMEOUT_S` (padrão 5 s).
 
-## Desenvolvimento sem a Landed real
+## Onde roda
 
-`backend/ferramentas/landed_simulada.py` implementa este contrato com câmbio e alíquotas **fictícios**:
+A Landed é um projeto próprio: https://github.com/gabrielgmln-ops/Landed. Ela aceita também `uf` (padrão SP) e `modal` (padrão MARITIMO); o Rastreador usa os padrões.
 
-```bash
-docker compose --profile simulada up --build
-```
+| Situação | Comportamento do Rastreador |
+|---|---|
+| Landed responde `422` (ex.: NCM fora da tabela) | `422` com o motivo da Landed |
 
-Se a Landed real usar outro caminho ou outros nomes de campo, o ajuste fica concentrado em `backend/app/landed.py` (`montar_requisicao` e a leitura de `custo_total`).
+Para subir: `docker compose up -d` no repositório da Landed (porta 8001). O Rastreador a encontra por `LANDED_URL=http://host.docker.internal:8001`.

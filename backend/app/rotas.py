@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from app import regras
 from app.auth import credenciais_validas, emitir_token, exige_usuario
 from app.db import get_db
-from app.landed import LandedIndisponivel, calcular_custo, cliente_landed
+from app.landed import LandedIndisponivel, LandedRecusou, calcular_custo, cliente_landed
 from app.models import ORDEM_ETAPAS, Etapa, Processo, TipoEtapa
 from app.schemas import (
     AlterarPrevista,
@@ -229,6 +229,8 @@ def atualizar_custo(
         p.custo_estimado = calcular_custo(p, cliente)
     except LandedIndisponivel as exc:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(exc)) from exc
+    except LandedRecusou as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
     p.custo_atualizado_em = datetime.now(timezone.utc)
     db.commit()
     db.refresh(p)

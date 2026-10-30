@@ -45,13 +45,6 @@ services:
     volumes:
       - ./frontend/src:/app/src
 
-  # Landed SIMULADA (dados fictícios). Só sobe com: docker compose --profile simulada up
-  landed-simulada:
-    build: ./backend
-    profiles: ["simulada"]
-    command: ["uvicorn", "ferramentas.landed_simulada:app", "--host", "0.0.0.0", "--port", "8001"]
-    ports:
-      - "8001:8001"
 
 volumes:
   pgdata:

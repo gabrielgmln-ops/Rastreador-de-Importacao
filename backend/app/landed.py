@@ -21,6 +21,21 @@ class LandedIndisponivel(Exception):
     """A Landed não respondeu, respondeu erro ou devolveu algo inválido."""
 
 
+class LandedRecusou(Exception):
+    """A Landed respondeu, mas recusou os dados do processo (HTTP 422)."""
+
+
+def _detalhe(resp: httpx.Response) -> str:
+    try:
+        detalhe = resp.json().get("detail")
+    except ValueError:
+        detalhe = None
+    # FastAPI manda texto ou lista de erros de validação
+    if isinstance(detalhe, list):
+        detalhe = "; ".join(str(d.get("msg", d)) for d in detalhe)
+    return f"a Landed recusou o cálculo: {detalhe or 'dados inválidos'}"
+
+
 def cliente_landed() -> Iterator[httpx.Client]:
     """Dependência do FastAPI: um cliente HTTP por requisição, sempre fechado.
     Nos testes é substituída por um cliente com transporte simulado."""
@@ -45,6 +60,9 @@ def calcular_custo(processo: Processo, cliente: httpx.Client) -> Decimal:
     """Pede à Landed o custo estimado do processo, em BRL, com duas casas."""
     try:
         resp = cliente.post("/calcular", json=montar_requisicao(processo))
+        if resp.status_code == 422:
+            # A Landed recusou a entrada (ex.: NCM fora da tabela): repassa o motivo dela
+            raise LandedRecusou(_detalhe(resp))
         resp.raise_for_status()
         bruto = resp.json()["custo_total"]
         # str() antes do Decimal: se a Landed mandar número, não herdamos erro de float

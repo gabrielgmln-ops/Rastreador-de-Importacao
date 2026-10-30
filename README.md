@@ -9,14 +9,14 @@ Stack: FastAPI + PostgreSQL · React (Vite) + TypeScript · Docker Compose · py
 
 ```bash
 cp .env.example .env          # troque as senhas e o SECRET_KEY
-docker compose --profile simulada up --build -d   # --profile simulada sobe uma Landed fictícia na 8001
+docker compose up --build -d
 docker compose exec api python -m ferramentas.seed  # 6 processos sintéticos
 ```
 
 - Painel: http://localhost:5173 (usuário/senha: `ADMIN_USER` / `ADMIN_PASSWORD` do `.env`)
 - API: http://localhost:8000/docs
 
-Com a Landed real rodando no host na porta 8001, suba sem `--profile simulada`. Contrato em [docs/landed-contrato.md](docs/landed-contrato.md).
+O custo vem da [Landed](https://github.com/gabrielgmln-ops/Landed), que deve estar rodando na porta 8001 do host (`docker compose up -d` no repositório dela). Contrato em [docs/landed-contrato.md](docs/landed-contrato.md).
 
 ## Regras
 
