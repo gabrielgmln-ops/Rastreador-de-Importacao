@@ -1,0 +1,12 @@
+# rastreador-importacao/.gitignore
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+node_modules/
+dist/
+coverage.xml
+*.tsbuildinfo

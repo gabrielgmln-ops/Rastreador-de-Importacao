@@ -1,0 +1,57 @@
+# rastreador-importacao/docker-compose.yml
+# Orquestra os três serviços do Rastreador: banco, API e painel web.
+# Todos os segredos vêm do arquivo .env (copie de .env.example).
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5433:5432"   # 5433 no host para não colidir com outro Postgres local
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # A API só sobe depois que o banco aceita conexões
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      # Dentro da rede do compose o host do banco é o nome do serviço: "db"
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/code/app   # recarga automática em desenvolvimento
+
+  web:
+    build: ./frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    volumes:
+      - ./frontend/src:/app/src
+
+  # Landed SIMULADA (dados fictícios). Só sobe com: docker compose --profile simulada up
+  landed-simulada:
+    build: ./backend
+    profiles: ["simulada"]
+    command: ["uvicorn", "ferramentas.landed_simulada:app", "--host", "0.0.0.0", "--port", "8001"]
+    ports:
+      - "8001:8001"
+
+volumes:
+  pgdata:
